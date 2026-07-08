@@ -20,15 +20,6 @@
 - [Sarthak Saini]     https://github.com/nyc-Sarthak
 - [Sajan] 
 
-**Advisors & Support:**
-- Ministry of Tribal Affairs (MoTA), Government of India
-- [Partner University / Organization / Institution Name]
-
----
-
-## 🤝 Contributing
-
-[Contribution guidelines...]
 ## 🎯 Why Vansetu?
 
 The Forest Rights Act demands systematic claim processing across 500+ districts. Vansetu cuts through complexity:
