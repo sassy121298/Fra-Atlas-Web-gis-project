@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FRA What-If Analysis Model — DSS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles/main.css" />
+</head>
+<body>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header class="app-header">
+  <span class="header-badge">DSS v1.0</span>
+  <div>
+    <div class="header-title">FRA <span>What-If Analysis</span> Model</div>
+  </div>
+  <div class="header-meta">
+    Forest Rights Act 2006 · Implementation Decision Support<br/>
+    MP · Tripura · Odisha · Telangana · 19 Districts
+  </div>
+</header>
+
+<!-- ══════════════ TAB BAR ══════════════ -->
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="builder">🔧 Scenario Builder</button>
+  <button class="tab-btn" data-tab="compare">📊 Baseline vs What-If</button>
+  <button class="tab-btn" data-tab="heatmap">🗺️ District Heatmap</button>
+  <button class="tab-btn" data-tab="insights">💡 Insights</button>
+</nav>
+
+<!-- ══════════════ BODY ══════════════ -->
+<main class="app-body">
+
+  <!-- ── PANEL 1: SCENARIO BUILDER ─────────────────────── -->
+  <div id="panel-builder" class="panel active">
+
+    <div class="section-header">
+      <div>
+        <h2>Scenario Builder</h2>
+        <p>Select a district, adjust drivers, and see predicted FRA outcomes instantly.</p>
+      </div>
+      <button class="reset-btn" id="reset-btn">↺ Reset to Baseline</button>
+    </div>
+
+    <!-- Quick Presets -->
+    <div class="presets-bar">
+      <span class="preset-label">Quick Scenarios:</span>
+      <button class="preset-btn" data-preset="deforestation">🌲 Deforestation Emergency</button>
+      <button class="preset-btn" data-preset="tribalInflux">👥 Tribal Influx</button>
+      <button class="preset-btn" data-preset="backlog">📋 Claims Backlog</button>
+      <button class="preset-btn" data-preset="encroachment">⚠️ Encroachment Surge</button>
+      <button class="preset-btn" data-preset="optimal">✅ Optimal Conditions</button>
+    </div>
+
+    <!-- District Selector -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">📍 Select District</div>
+      <div class="district-selector">
+        <div class="selector-group">
+          <label for="state-select">Filter by State</label>
+          <select id="state-select"></select>
+        </div>
+        <div class="selector-group">
+          <label for="district-select">District</label>
+          <select id="district-select"></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div id="metrics-grid" class="metric-grid" style="margin-bottom:20px"></div>
+
+    <!-- Sliders + Ask Claude -->
+    <div class="grid-2" style="gap:20px">
+      <div class="card">
+        <div class="card-title">🎛️ Adjust Scenario Drivers</div>
+        <div class="sliders-grid" id="sliders-grid"></div>
+        <div class="weight-legend" style="margin-top:18px">
+          <span class="weight-label" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-light)">Model weights:</span>
+          <span class="weight-chip"><span class="weight-dot" style="background:#27ae60"></span>Forest 35%</span>
+          <span class="weight-chip"><span class="weight-dot" style="background:#2980b9"></span>Tribal 20%</span>
+          <span class="weight-chip"><span class="weight-dot" style="background:#e67e22"></span>Backlog 15%</span>
+          <span class="weight-chip"><span class="weight-dot" style="background:#c0392b"></span>Encroach 15%</span>
+          <span class="weight-chip"><span class="weight-dot" style="background:#8e44ad"></span>GramSabha 15%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🤖 AI Policy Assistant</div>
+        <p style="font-size:13px;color:var(--ink-light);margin-bottom:16px">
+          Ask Claude to analyse your scenario and generate contextual policy recommendations,
+          intervention strategies, or a full DSS report based on the current slider settings.
+        </p>
+        <button class="ask-claude-btn" onclick="askClaude('builder')">
+          🤖 Generate Policy Analysis
+        </button>
+        <div id="claude-builder-panel" class="ask-claude-panel"></div>
+        <div style="margin-top:16px;padding:14px;background:var(--parchment);border-radius:var(--radius);font-size:12px;color:var(--ink-light)">
+          <strong>Tip:</strong> Apply a Quick Scenario preset above, then ask Claude for targeted intervention recommendations for that crisis scenario.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── PANEL 2: BASELINE vs WHAT-IF ──────────────────── -->
+  <div id="panel-compare" class="panel">
+    <div class="section-header">
+      <div>
+        <h2>Baseline vs What-If</h2>
+        <p>Side-by-side comparison of district baseline and your modified scenario.</p>
+      </div>
+    </div>
+    <div id="compare-content"></div>
+  </div>
+
+  <!-- ── PANEL 3: DISTRICT HEATMAP ─────────────────────── -->
+  <div id="panel-heatmap" class="panel">
+    <div class="section-header">
+      <div>
+        <h2>District Risk Heatmap</h2>
+        <p>All 19 districts ranked by FRA implementation risk. Click column headers to sort.</p>
+      </div>
+    </div>
+    <div id="heatmap-content"></div>
+  </div>
+
+  <!-- ── PANEL 4: INSIGHTS ──────────────────────────────── -->
+  <div id="panel-insights" class="panel">
+    <div class="section-header">
+      <div>
+        <h2>Insights &amp; Analysis</h2>
+        <p>Context-aware interpretations of your current scenario with actionable recommendations.</p>
+      </div>
+    </div>
+    <div id="insights-content"></div>
+  </div>
+
+</main>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>
